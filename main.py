@@ -29,4 +29,22 @@ class Particle:
     pass
 
 class BlackHoleSimulation:
-    pass
+    def __init__(self):
+        self.black_hole = Particle(0, 0, 21, BLACK, M)
+        self.particles = [self.create_orbiting_particle() for _ in range(5)]  # Initial 5 particles
+        self.paused = False
+        self.simulation_speed = 1.0
+
+    def create_orbiting_particle(self):
+        pass
+    
+    def draw(self, win):
+        win.blit(space_background, (0, 0))
+        self.black_hole.draw(win)
+        for particle in self.particles:
+            particle.draw(win)
+     
+
+if __name__ == "__main__":
+    simulation = BlackHoleSimulation()
+    simulation.run()
