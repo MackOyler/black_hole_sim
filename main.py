@@ -75,7 +75,7 @@ class Particle:
             self.trail.pop(0)
 
         return True  # Particle still in the simulation
-    
+
 class BlackHoleSimulation:
     def __init__(self):
         self.black_hole = Particle(0, 0, 21, BLACK, M)
@@ -115,6 +115,23 @@ class BlackHoleSimulation:
                     new_particles.append(particle)
             self.particles = new_particles
 
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                self.paused = not self.paused
+            if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
+                self.simulation_speed *= 1.1
+            if event.key == pygame.K_MINUS:
+                self.simulation_speed /= 1.1
+            if event.key == pygame.K_a:
+                # Add a new particle with random initial position and velocity
+                if len(self.particles) < MAX_PARTICLES:
+                    self.particles.append(self.create_orbiting_particle())
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:  # Left click to add a new particle
+                if len(self.particles) < MAX_PARTICLES:
+                    self.particles.append(self.create_orbiting_particle())
+
     def run(self):
         clock = pygame.time.Clock()
         run = True
@@ -122,6 +139,16 @@ class BlackHoleSimulation:
         while run:
             clock.tick(60)
             WIN.fill(BLACK)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                self.handle_event(event)
+
+            self.update()
+            self.draw(WIN)
+
+            pygame.display.update()
 
         pygame.quit()
 
