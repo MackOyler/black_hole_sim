@@ -75,7 +75,7 @@ class Particle:
             self.trail.pop(0)
 
         return True  # Particle still in the simulation
-
+    
 class BlackHoleSimulation:
     def __init__(self):
         self.black_hole = Particle(0, 0, 21, BLACK, M)
@@ -96,13 +96,34 @@ class BlackHoleSimulation:
         particle.x_vel = -velocity_magnitude * math.sin(angle)
         particle.y_vel = velocity_magnitude * math.cos(angle)
         return particle
-    
+
     def draw(self, win):
         win.blit(space_background, (0, 0))
         self.black_hole.draw(win)
         for particle in self.particles:
             particle.draw(win)
-     
+
+    def update(self):
+        if not self.paused:
+            new_particles = []
+            for particle in self.particles:
+                if not particle.update_position(self.black_hole):
+                    if len(self.particles) + len(new_particles) < MAX_PARTICLES:
+                        # Particle absorbed, create fragments
+                        new_particles.extend(particle.fragment())
+                else:
+                    new_particles.append(particle)
+            self.particles = new_particles
+
+    def run(self):
+        clock = pygame.time.Clock()
+        run = True
+
+        while run:
+            clock.tick(60)
+            WIN.fill(BLACK)
+
+        pygame.quit()
 
 if __name__ == "__main__":
     simulation = BlackHoleSimulation()
